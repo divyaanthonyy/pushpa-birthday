@@ -4,13 +4,13 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>pushpa.exe</title>
-<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
 <style>
-* { box-sizing: border-box; margin: 0; padding: 0; }
+* { box-sizing: border-box; margin: 0; padding: 0; text-transform: lowercase; }
 
 html, body {
   height: 100%;
-  font-family: 'DM Sans', sans-serif;
+  font-family: 'Share Tech Mono', monospace;
   background: #ede4ff;
   overflow-x: hidden;
 }
@@ -215,6 +215,36 @@ html, body {
 }
 .overlay.show { opacity: 1; pointer-events: all; }
 
+/* ── FLORAL TRANSITION ── */
+#floral-transition {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  pointer-events: none;
+  overflow: hidden;
+  opacity: 0;
+}
+#floral-transition.active {
+  pointer-events: all;
+}
+.petal {
+  position: absolute;
+  opacity: 0;
+  transform: scale(0) rotate(0deg);
+  animation: bloomPetal 0.7s cubic-bezier(.22,1,.36,1) forwards;
+}
+@keyframes bloomPetal {
+  0%   { opacity: 0; transform: scale(0) rotate(-30deg); }
+  60%  { opacity: 1; transform: scale(1.15) rotate(8deg); }
+  100% { opacity: 1; transform: scale(1) rotate(0deg); }
+}
+@keyframes fadeFloral {
+  0%   { opacity: 0; }
+  15%  { opacity: 1; }
+  75%  { opacity: 1; }
+  100% { opacity: 0; }
+}
+
 /* ── INVITATION ── */
 .flowers {
   font-size: 13px;
@@ -255,7 +285,6 @@ html, body {
   line-height: 1.9;
   text-align: center;
   margin-bottom: 1.5rem;
-  font-weight: 300;
 }
 
 .dcard {
@@ -358,6 +387,9 @@ html, body {
 
 <!-- OVERLAY -->
 <div class="overlay" id="overlay"></div>
+
+<!-- FLORAL TRANSITION -->
+<div id="floral-transition"></div>
 
 <!-- CATS — always visible, fixed layer -->
 <div class="cats">
@@ -533,22 +565,80 @@ setTimeout(() => {
   document.getElementById('openbtn').classList.add('show');
 }, 4100);
 
-/* OPEN INVITE */
+/* OPEN INVITE — floral transition */
 function openInvite() {
-  const ov = document.getElementById('overlay');
-  ov.classList.add('show');
+  const ft = document.getElementById('floral-transition');
+  ft.innerHTML = '';
+  ft.classList.add('active');
+
+  const flowerSVGs = [
+    // 5-petal flower
+    (c,s) => `<svg width="${s}" height="${s}" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+      <g transform="translate(50,50)">
+        ${[0,72,144,216,288].map(a=>`<ellipse cx="${Math.cos(a*Math.PI/180)*22}" cy="${Math.sin(a*Math.PI/180)*22}" rx="14" ry="20" fill="${c}" opacity="0.92" transform="rotate(${a},${Math.cos(a*Math.PI/180)*22},${Math.sin(a*Math.PI/180)*22})"/>`).join('')}
+        <circle cx="0" cy="0" r="13" fill="#fff9" />
+      </g>
+    </svg>`,
+    // 4-petal flower
+    (c,s) => `<svg width="${s}" height="${s}" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+      <g transform="translate(50,50)">
+        ${[0,90,180,270].map(a=>`<ellipse cx="${Math.cos(a*Math.PI/180)*20}" cy="${Math.sin(a*Math.PI/180)*20}" rx="12" ry="22" fill="${c}" opacity="0.9" transform="rotate(${a},${Math.cos(a*Math.PI/180)*20},${Math.sin(a*Math.PI/180)*20})"/>`).join('')}
+        <circle cx="0" cy="0" r="11" fill="#fde68a" opacity="0.95"/>
+      </g>
+    </svg>`,
+    // daisy
+    (c,s) => `<svg width="${s}" height="${s}" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+      <g transform="translate(50,50)">
+        ${[0,40,80,120,160,200,240,280,320].map(a=>`<ellipse cx="${Math.cos(a*Math.PI/180)*24}" cy="${Math.sin(a*Math.PI/180)*24}" rx="8" ry="18" fill="${c}" opacity="0.88" transform="rotate(${a},${Math.cos(a*Math.PI/180)*24},${Math.sin(a*Math.PI/180)*24})"/>`).join('')}
+        <circle cx="0" cy="0" r="10" fill="#fbbf24" opacity="0.97"/>
+      </g>
+    </svg>`,
+  ];
+
+  const colors = ['#f9a8d4','#d8b4fe','#c4b5fd','#fbcfe8','#e9d5ff','#fde68a','#f0abfc','#a5f3fc','#ddd6fe','#fecdd3'];
+  const count = 28;
+
+  for (let i = 0; i < count; i++) {
+    const el = document.createElement('div');
+    el.className = 'petal';
+    const size = 55 + Math.random() * 80;
+    const x = Math.random() * 100;
+    const y = Math.random() * 100;
+    const delay = Math.random() * 0.9;
+    const color = colors[Math.floor(Math.random() * colors.length)];
+    const shape = flowerSVGs[Math.floor(Math.random() * flowerSVGs.length)];
+    el.style.cssText = `left:${x}%;top:${y}%;width:${size}px;height:${size}px;animation-delay:${delay}s;`;
+    el.innerHTML = shape(color, size);
+    ft.appendChild(el);
+  }
+
+  // Animate the whole floral layer in then out
+  ft.style.animation = 'fadeFloral 1.8s ease forwards';
+  ft.style.opacity = '0';
+
   setTimeout(() => {
     document.getElementById('s-terminal').classList.add('hidden');
     document.getElementById('s-invite').classList.add('visible');
-    ov.classList.remove('show');
-  }, 450);
+  }, 900);
+
+  setTimeout(() => {
+    ft.style.animation = '';
+    ft.style.opacity = '0';
+    ft.classList.remove('active');
+    ft.innerHTML = '';
+  }, 1850);
 }
 
 /* RSVP */
 function rsvp(yes) {
-  document.getElementById('rresp').textContent = yes
-    ? '✦ see you there! ♥'
-    : "you'll be missed 🎂";
+  if (yes) {
+    const phone = '60129248508';
+    const text = encodeURIComponent("hi pushpa, i'll be coming to your birthday party! 🤍");
+    window.open(`https://wa.me/${phone}?text=${text}`, '_blank');
+    document.getElementById('rresp').textContent = '✦ see you there! ♥';
+  } else {
+    document.getElementById('rresp').textContent = "you'll be missed 🎂";
+  }
 }
 </script>
 </body>
