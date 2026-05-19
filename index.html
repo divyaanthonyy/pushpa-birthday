@@ -507,11 +507,11 @@ html, body {
       </div>
       <div class="drow">
         <div class="dico">🕐</div>
-        <div><div class="dlbl">time</div><div class="dval">11:00 AM – 2:00 PM</div></div>
+        <div><div class="dlbl">time</div><div class="dval">10:00 AM – 2:00 PM</div></div>
       </div>
       <div class="drow">
         <div class="dico">📍</div>
-        <div><div class="dlbl">place</div><div class="dval">TBA</div><div class="dsub">stay tuned 🐾</div></div>
+        <div><div class="dlbl">place</div><div class="dval">Deepah Maju</div><div class="dsub">USJ 16</div></div>
       </div>
     </div>
     <div class="hdiv">♡</div>
@@ -521,6 +521,7 @@ html, body {
       <button class="rbtn rbtn-n" onclick="rsvp(false)">can't make it</button>
     </div>
     <div class="rresp" id="rresp"></div>
+    <div style="font-size:10px;color:#c4b5fd;letter-spacing:1px;text-align:center;margin-top:6px;">tap to send a quick message on whatsapp ♡</div>
     <div class="inv-footer">
       with love, for pushpa's 52nd<br>
       🐾 🐾 🐾
@@ -630,13 +631,17 @@ function openInvite() {
 }
 
 /* RSVP */
+// ⬇️ Replace this with your actual WhatsApp group invite link
+const WA_GROUP_LINK = 'https://chat.whatsapp.com/8BqwJMPJBgIIqrg0VDZxQA?mode=gi_t';
+
 function rsvp(yes) {
   if (yes) {
-    const phone = '60129248508';
-    const text = encodeURIComponent("hi pushpa, i'll be coming to your birthday party! 🤍");
-    window.open(`https://wa.me/${phone}?text=${text}`, '_blank');
+    const text = encodeURIComponent("i'll be there for pushpa's birthday lunch! 💜");
+    window.open(`${WA_GROUP_LINK}&text=${text}`, '_blank');
     document.getElementById('rresp').textContent = '✦ see you there! ♥';
   } else {
+    const text = encodeURIComponent("sorry, i won't be able to make it to pushpa's birthday lunch 🎂");
+    window.open(`${WA_GROUP_LINK}&text=${text}`, '_blank');
     document.getElementById('rresp').textContent = "you'll be missed 🎂";
   }
 }
